@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model client {
+  name             String? @db.VarChar(255)
+  telephone_number Int?
+  client_id        Int     @id @default(autoincrement())
+}
+
+model priority {
+  description String? @db.VarChar(255)
+  priority_id Int     @id @default(autoincrement()) @db.UnsignedTinyInt
+}
+
+model staff {
+  name     String? @db.VarChar(255)
+  staff_id Int     @id @default(autoincrement())
+}
+
+model task {
+  description   String?   @db.VarChar(255)
+  priority_id   Int?      @db.UnsignedTinyInt
+  created_date  DateTime? @db.DateTime(0)
+  resolved_date DateTime? @db.DateTime(0)
+  task_id       Int       @id @default(autoincrement())
+  client_id     Int?
+  staff_id      Int?
+}
+
+model task_status {
+  description    String? @db.VarChar(255)
+  task_status_id Int     @id @default(autoincrement()) @db.UnsignedTinyInt
+}
