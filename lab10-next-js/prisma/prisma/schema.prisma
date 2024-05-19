@@ -11,29 +11,59 @@ model client {
   name             String? @db.VarChar(255)
   telephone_number Int?
   client_id        Int     @id @default(autoincrement())
+  user_id          Int?
+  user             user?   @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "client_ibfk_1")
+  task             task[]
+
+  @@index([user_id], map: "user_id")
 }
 
 model priority {
   description String? @db.VarChar(255)
   priority_id Int     @id @default(autoincrement()) @db.UnsignedTinyInt
+  task        task[]
 }
 
 model staff {
   name     String? @db.VarChar(255)
   staff_id Int     @id @default(autoincrement())
+  user_id  Int?
+  user     user?   @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "staff_ibfk_1")
+  task     task[]
+
+  @@index([user_id], map: "user_id")
 }
 
 model task {
-  description   String?   @db.VarChar(255)
-  priority_id   Int?      @db.UnsignedTinyInt
-  created_date  DateTime? @db.DateTime(0)
-  resolved_date DateTime? @db.DateTime(0)
-  task_id       Int       @id @default(autoincrement())
-  client_id     Int?
-  staff_id      Int?
+  description    String?      @db.VarChar(255)
+  priority_id    Int?         @db.UnsignedTinyInt
+  created_date   DateTime?    @db.DateTime(0)
+  resolved_date  DateTime?    @db.DateTime(0)
+  task_id        Int          @id @default(autoincrement())
+  client_id      Int?
+  staff_id       Int?
+  task_status_id Int?         @db.UnsignedTinyInt
+  client         client?      @relation(fields: [client_id], references: [client_id], onDelete: Restrict, onUpdate: Restrict, map: "task_ibfk_1")
+  staff          staff?       @relation(fields: [staff_id], references: [staff_id], onDelete: Restrict, onUpdate: Restrict, map: "task_ibfk_2")
+  priority       priority?    @relation(fields: [priority_id], references: [priority_id], onDelete: Restrict, onUpdate: Restrict, map: "task_ibfk_3")
+  task_status    task_status? @relation(fields: [task_status_id], references: [task_status_id], onDelete: Restrict, onUpdate: Restrict, map: "task_ibfk_4")
+
+  @@index([client_id], map: "client_id")
+  @@index([priority_id], map: "priority_id")
+  @@index([staff_id], map: "staff_id")
+  @@index([task_status_id], map: "task_status_id")
 }
 
 model task_status {
   description    String? @db.VarChar(255)
   task_status_id Int     @id @default(autoincrement()) @db.UnsignedTinyInt
+  task           task[]
+}
+
+model user {
+  user_id  Int      @id @default(autoincrement())
+  username String?  @unique(map: "username") @db.VarChar(255)
+  password String?  @db.VarChar(255)
+  client   client[]
+  staff    staff[]
 }
