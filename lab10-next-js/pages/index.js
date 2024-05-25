@@ -10,19 +10,19 @@ const IndexPage = () => {
       <ul>
         <li>
           <Link href="/client-registration">
-            <a>Client</a>
+            Client
           </Link>
         </li>
         <li>
           <Link href="/staff-registration">
-            <a>Staff</a>
+            Staff
           </Link>
         </li>
       </ul>
       <h2>Already have an account?</h2>
       <p>
         <Link href="/login">
-          <a>Login</a>
+          Login
         </Link>
       </p>
     </div>
