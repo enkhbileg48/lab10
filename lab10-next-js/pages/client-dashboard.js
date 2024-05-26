@@ -1,40 +1,55 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 const ClientDashboard = () => {
-  const [report, setReport] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [tasks, setTasks] = useState([]);
+  const [description, setDescription] = useState('');
+  const router = useRouter();
+  const clientId = 1; // Replace this with the actual client ID
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await fetch(`/api/client-tasks?clientId=${clientId}`);
+        const data = await response.json();
+
+        // Ensure data is an array
+        if (Array.isArray(data)) {
+          setTasks(data);
+        } else {
+          console.error("Unexpected response format:", data);
+          setTasks([]);
+        }
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+        setTasks([]);
+      }
+    };
+
+    fetchTasks();
+  }, [clientId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
-
-    if (!report) {
-      setError('Report cannot be empty');
-      return;
-    }
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/client/report', {
+      const response = await fetch('/api/client-tasks', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ report }),
+        body: JSON.stringify({ clientId, description }),
       });
 
-      const data = await response.json();
-
       if (response.ok) {
-        setSuccess('Report submitted successfully');
-      } else {
-        setError(data.message);
+        const newTask = await response.json();
+
+        // Update tasks state
+        setTasks((prevTasks) => [...prevTasks, newTask]);
+        setDescription('');
       }
     } catch (error) {
-      setError('An unexpected error occurred');
+      console.error('An unexpected error occurred:', error);
     }
   };
 
@@ -43,17 +58,22 @@ const ClientDashboard = () => {
       <h1>Client Dashboard</h1>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="report">Report:</label>
-          <textarea
-            id="report"
-            value={report}
-            onChange={(e) => setReport(e.target.value)}
+          <label htmlFor="description">Task Description:</label>
+          <input
+            type="text"
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
           />
         </div>
-        <button type="submit">Submit Report</button>
+        <button type="submit">Add Task</button>
       </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
+      <h2>Your Tasks</h2>
+      <ul>
+        {Array.isArray(tasks) && tasks.map((task) => (
+          <li key={task.task_id}>{task.description}</li>
+        ))}
+      </ul>
     </div>
   );
 };

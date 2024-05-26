@@ -1,65 +1,66 @@
-drop database if exists lab10;
-create database if not exists lab10;
-use lab10;
+DROP DATABASE IF EXISTS lab10;
+CREATE DATABASE IF NOT EXISTS lab10;
+USE lab10;
 
--- priority table
-drop table if exists priority;
-create table if not exists priority (
-    description varchar(255),
-    priority_id tinyint unsigned auto_increment primary key
+-- Priority table
+DROP TABLE IF EXISTS priority;
+CREATE TABLE IF NOT EXISTS priority (
+    description VARCHAR(255),
+    priority_id TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY
 );
 
--- task status table
-drop table if exists task_status;
-create table if not exists task_status (
-    description varchar(255),
-    task_status_id tinyint unsigned auto_increment primary key
+-- Task status table
+DROP TABLE IF EXISTS task_status;
+CREATE TABLE IF NOT EXISTS task_status (
+    description VARCHAR(255),
+    task_status_id TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY
 );
 
-insert into priority(description)
-values ("high"), ("mid"), ("low");
+INSERT INTO priority(description)
+VALUES ('high'), ('mid'), ('low');
 
-insert into task_status(description)
-values ("resolved"), ("resolving"), ("not resolved");
+INSERT INTO task_status(description)
+VALUES ('resolved'), ('resolving'), ('not resolved');
 
-CREATE TABLE user (
+-- User table
+CREATE TABLE IF NOT EXISTS user (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) UNIQUE,
     password VARCHAR(255)
 ) ENGINE=InnoDB; -- Ensure InnoDB storage engine for compatibility with foreign keys
 
--- staff table
-drop table if exists staff;
-create table if not exists staff (
+-- Staff table
+DROP TABLE IF EXISTS staff;
+CREATE TABLE IF NOT EXISTS staff (
     name VARCHAR(255),
-    staff_id INT auto_increment primary key,
+    staff_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
-    foreign key (user_id) references user(user_id)
+    FOREIGN KEY (user_id) REFERENCES user(user_id)
 );
 
--- client table
-drop table if exists client;
-create table if not exists client (
-    name varchar(255),
-    telephone_number int,
-    client_id int auto_increment primary key,
+-- Client table
+DROP TABLE IF EXISTS client;
+CREATE TABLE IF NOT EXISTS client (
+    name VARCHAR(255),
+    telephone_number INT,
+    client_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
-    foreign key (user_id) references user(user_id)
+    FOREIGN KEY (user_id) REFERENCES user(user_id)
 );
 
--- task table
-drop table if exists task;
-create table if not exists task (
-    description varchar(255),
-    priority_id tinyint unsigned,
-    created_date datetime,
-    resolved_date datetime,
-    task_id int auto_increment primary key,
-    client_id int,
-    staff_id int,
-    task_status_id tinyint unsigned,
-    foreign key (client_id) references client(client_id),
-    foreign key (staff_id) references staff(staff_id),
-    foreign key (priority_id) references priority(priority_id),
-    foreign key (task_status_id) references task_status(task_status_id)
-);
+-- Task table acting as both task and report
+DROP TABLE IF EXISTS task;
+CREATE TABLE IF NOT EXISTS task (
+    task_id INT AUTO_INCREMENT PRIMARY KEY,
+    description VARCHAR(255) NOT NULL,
+    priority_id TINYINT UNSIGNED,
+    created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    resolved_date DATETIME,
+    client_id INT,
+    staff_id INT,
+    task_status_id TINYINT UNSIGNED,
+    FOREIGN KEY (client_id) REFERENCES client(client_id),
+    FOREIGN KEY (staff_id) REFERENCES staff(staff_id),
+    FOREIGN KEY (priority_id) REFERENCES priority(priority_id),
+    FOREIGN KEY (task_status_id) REFERENCES task_status(task_status_id)
+) ENGINE=InnoDB; -- Ensure InnoDB storage engine for compatibility with foreign keys

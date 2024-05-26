@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 
 const prisma = new PrismaClient();
 
@@ -16,27 +15,37 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Check if the user exists
     const user = await prisma.user.findUnique({
       where: { username },
-      include: { client: true, staff: true },
     });
 
     if (!user) {
       return res.status(400).json({ message: 'Invalid username or password' });
     }
 
+    // Compare the provided password with the hashed password
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
       return res.status(400).json({ message: 'Invalid username or password' });
     }
 
-    const token = jwt.sign({ userId: user.id, role: user.client ? 'client' : 'staff' }, 'your_secret_key', { expiresIn: '1h' });
+    // Determine the role of the user (client or staff)
+    const client = await prisma.client.findFirst({
+      where: { user_id: user.user_id },
+    });
 
-    res.status(200).json({ token });
+    const staff = await prisma.staff.findFirst({
+      where: { user_id: user.user_id },
+    });
+
+    const role = client ? 'client' : staff ? 'staff' : null;
+
+    return res.status(200).json({ message: 'Login successful', role });
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    return res.status(500).json({ message: 'Internal Server Error' });
   } finally {
     await prisma.$disconnect();
   }

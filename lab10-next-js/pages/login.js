@@ -11,11 +11,6 @@ const Login = () => {
     e.preventDefault();
     setError('');
 
-    if (!username || !password) {
-      setError('All fields are required');
-      return;
-    }
-
     try {
       const response = await fetch('/api/login', {
         method: 'POST',
@@ -28,9 +23,11 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem('token', data.token);
-        const userRole = JSON.parse(atob(data.token.split('.')[1])).role;
-        router.push(`/${userRole}-dashboard`);
+        if (data.role === 'client') {
+          router.push('/client-dashboard');
+        } else if (data.role === 'staff') {
+          router.push('/staff-dashboard');
+        }
       } else {
         setError(data.message);
       }

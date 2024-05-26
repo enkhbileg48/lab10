@@ -1,0 +1,4 @@
+npm install jsonwebtoken
+
+npm install jwt-decode
+yarn add jwt-decode
