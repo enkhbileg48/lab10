@@ -5,15 +5,14 @@ const ClientDashboard = () => {
   const [tasks, setTasks] = useState([]);
   const [description, setDescription] = useState('');
   const router = useRouter();
-  const clientId = 1; // Replace this with the actual client ID
+  const clientId = 1; // Logical error
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
         const response = await fetch(`/api/client-tasks?clientId=${clientId}`);
         const data = await response.json();
-
-        // Ensure data is an array
+        // Array data
         if (Array.isArray(data)) {
           setTasks(data);
         } else {
@@ -25,13 +24,11 @@ const ClientDashboard = () => {
         setTasks([]);
       }
     };
-
     fetchTasks();
   }, [clientId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const response = await fetch('/api/client-tasks', {
         method: 'POST',
@@ -44,7 +41,7 @@ const ClientDashboard = () => {
       if (response.ok) {
         const newTask = await response.json();
 
-        // Update tasks state
+        // task state update
         setTasks((prevTasks) => [...prevTasks, newTask]);
         setDescription('');
       }

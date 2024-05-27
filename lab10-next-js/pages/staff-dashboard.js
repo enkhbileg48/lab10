@@ -21,7 +21,7 @@ const StaffDashboard = () => {
   const resolveTask = async (taskId) => {
     try {
       console.log(taskId);
-      await axios.post(`/api/resolve-task/${taskId}`);
+      await axios.post(`/api/resolve-task/  ${taskId}`);
       setTasks(tasks.map(task => task.task_id === taskId ? { ...task, task_status_id: 1, resolved_date: new Date() } : task));
     } catch (error) {
       setError('Error resolving task');
@@ -36,7 +36,6 @@ const StaffDashboard = () => {
         {tasks.map((task) => (
           <li key={task.task_id}>
             <p>Description: {task.description}</p>
-            <p>Priority: {task.priority ? task.priority.description : 'No priority'}</p>
             <p>Status: {task.task_status ? task.task_status.description : 'Not resolved'}</p>
             <button onClick={() => resolveTask(task.task_id)} disabled={task.task_status_id === 1}>
               {task.task_status_id === 1 ? 'Resolved' : 'Resolve'}

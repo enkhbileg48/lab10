@@ -22,7 +22,7 @@ const ClientRegistration = () => {
     const data = await res.json();
 
     if (res.ok) {
-      router.push('/');
+      router.push('/');//back to index.js
     } else {
       setError(data.message);
     }

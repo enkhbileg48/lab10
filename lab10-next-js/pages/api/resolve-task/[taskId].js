@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     const updatedTask = await prisma.task.update({
       where: { task_id: parseInt(taskId, 10) },
       data: {
-        task_status_id: 1, // Assuming 1 is the ID for 'Resolved'
+        task_status_id: 1, 
         resolved_date: new Date(),
       },
     });

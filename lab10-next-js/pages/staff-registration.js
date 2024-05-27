@@ -20,7 +20,7 @@ const StaffRegistration = () => {
     }
 
     try {
-      const response = await fetch('/api/staff-registration', {
+      const response = await fetch('/api/staff-registration',{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -29,12 +29,11 @@ const StaffRegistration = () => {
       });
 
       const data = await response.json();
-
       if (response.ok) {
         setSuccess(data.message);
         setTimeout(() => {
-          router.push('/');
-        }, 2000); // Redirect to the homepage after 2 seconds
+          router.push('/');//back to index
+        }, 2000); 
       } else {
         setError(data.message);
       }

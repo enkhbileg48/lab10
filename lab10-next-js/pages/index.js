@@ -5,7 +5,7 @@ import Link from 'next/link';
 const IndexPage = () => {
   return (
     <div>
-      <h1>Welcome to Our Application!</h1>
+      <h1>Laboratory 10</h1>
       <h2>Register as:</h2>
       <ul>
         <li>
