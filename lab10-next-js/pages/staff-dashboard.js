@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from 'axios';  
 
 const StaffDashboard = () => {
   const [tasks, setTasks] = useState([]);
@@ -20,6 +20,7 @@ const StaffDashboard = () => {
 
   const resolveTask = async (taskId) => {
     try {
+      console.log(taskId);
       await axios.post(`/api/resolve-task/${taskId}`);
       setTasks(tasks.map(task => task.task_id === taskId ? { ...task, task_status_id: 1, resolved_date: new Date() } : task));
     } catch (error) {
