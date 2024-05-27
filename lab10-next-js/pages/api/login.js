@@ -23,7 +23,7 @@ export default async function handler(req, res) {
     if (!isPasswordValid) {
       return res.status(400).json({ message: 'Invalid username or password' });
     }
-    // Determine the role of the user (client or staff)
+    // Determine role: staff or client
     const client = await prisma.client.findFirst({
       where: { user_id: user.user_id },
     });
